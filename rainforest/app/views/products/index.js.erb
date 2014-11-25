@@ -1,0 +1,3 @@
+$('#products').append('<%= j render(@products) %>');
+$('.pagination').replaceWith('<%= j paginate(@products) %>');
+console.log('<%= j({ids: @products.map { |prod| prod.id }, num: @products.size}.inspect) %>');

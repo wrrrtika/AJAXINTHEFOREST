@@ -1,0 +1,40 @@
+<div class="header"><h1>RAIN FOREST PRODUCTS</h1></div>
+<i><p>we're totally not amazon</p></i>
+
+<p><%= link_to("Upload New Product", new_product_path) %></p>
+
+<%= form_tag products_path, method: :get, authentication: false, id: 'search-form' do %>
+  <%= text_field_tag :search, params[:search] %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+<p id="products-count"><%= page_entries_info @products %></p>
+
+<div id="products">
+  <%= render @products %>
+</div>
+
+<p id="products-pagination"><%= paginate @products %></p>
+
+
+<script type="text/javascript">
+  function display_search_results() {
+    // readyState === 4 means that the asynchronous request completed successfully
+    if (this.readyState === 4) {
+      console.log(this);
+      document.getElementById('products').innerHTML = this.responseText;
+    }
+  }
+
+  var form = document.getElementById('search-form');
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    var searchValue = document.getElementById('search').value;
+
+    var xhr = new XMLHttpRequest();
+    xhr.onload = display_search_results;
+    xhr.open('GET', '/products?search=' + searchValue, true);
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    xhr.send();
+  });
+</script>
