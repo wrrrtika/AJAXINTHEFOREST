@@ -7,38 +7,24 @@
 
 
 
-<% if current_user %>
 
   <h3>Reviews</h3>
 
   <p>Reviews for <%= @product.name %></p>
 
-  <% @product.reviews.each do |review| %>
-    <p>
-      <%= review.comment %>
-      <br>
-      <% if review.user != nil %>
-        <em> by <%= review.user.name %></em>
-        Added on: <%= review.created_at %>
-      <% end %>
-    </p>
-  <% end %>
+  <div id="review-list">
+   <%= render :partial => "reviews" %>
+  </div>
 
 
   <h4>New Review</h4>
 
-  <%= form_for([@product, @review]) do |f| %>
-    <% if @review.errors.any? %>
-      <div id="error_explanation">
-        <h2><%= pluralize(@review.errors.count, "error") %> prohibited this review from being saved:</h2>
-
-        <ul>
-        <% @review.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-        </ul>
+  <%= form_for([@product, @review], :remote => true) do |f| %>
+    <div id="review-form-errors">
+        <%= render :partial => "/products/review_form_errors" %>
       </div>
-    <% end %>
+
+   </div>
 
     <div class="field">
       <%= f.label :comment %><br />
@@ -49,9 +35,21 @@
     </div>
   <% end %>
 
-<% else %>
-  <p>Want to review? <%= link_to "log in", new_session_path %> </p> 
-<% end %>
 
 <%= link_to "Back to Products", products_path %>
+
+
+<script type="text/javascript">
+  $(function() {
+     $("#new_review")
+        .on('ajax:beforeSend', function() { // set this code to happen just before the ajax request is made
+          $("input[type='submit']") // make changes to the submit button
+            .val('Saving...') // change the text on the button
+            .attr('disabled', 'disabled'); // disable the button
+        })
+  });
+</script>
+
+
+
 
